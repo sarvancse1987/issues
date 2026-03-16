@@ -216,3 +216,23 @@ public SaveLoanReportingNoteResponse SaveLoanReportingNotes(SaveLoanReportingNot
 
 
 Validation failed for one or more entities. See 'EntityValidationErrors' property for more details
+
+
+
+
+CreatedById: 6197
+CreatedDate: {3/16/2026 3:52:58 PM}
+DBCreatedBy: null
+DBCreatedDate: null
+DBLastUpdatedBy: null
+DBLastUpdatedDate: null
+HardDelete: false
+LastUpdatedById: null
+LastUpdatedDate: null
+LoanId: 53356
+LoanReportingNoteGroup: "LNREPTSC"
+LoanReportingNoteId: 0
+LoanReportingNoteType: "HGHRSK"
+NoteJson: "{\"Trigger\":\"Uncovered Pool\",\"StatusDateChange\":\"03/16/2026\",\"OrderId\":\"1060005529\",\"ScopeOfWork\":\"Scope of Work\",\"MostRecentAction\":\"test notes\"}"
+OrderId: 1060005529
+Version: null
