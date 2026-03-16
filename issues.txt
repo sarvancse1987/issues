@@ -1,0 +1,218 @@
+USE [FieldServicesDB]
+GO
+
+/****** Object:  Table [fs].[LoanReportingNote]    Script Date: 3/16/2026 9:16:24 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [fs].[LoanReportingNote](
+	[LoanReportingNoteId] [int] IDENTITY(1,1) NOT NULL,
+	[LoanId] [int] NOT NULL,
+	[OrderId] [int] NULL,
+	[LoanReportingNoteGroup] [varchar](8) NOT NULL,
+	[LoanReportingNoteType] [varchar](8) NOT NULL,
+	[NoteJson] [nvarchar](max) NOT NULL,
+	[CreatedById] [int] NULL,
+	[CreatedDate] [datetime2](7) NULL,
+	[LastUpdatedById] [int] NULL,
+	[LastUpdatedDate] [datetime2](7) NULL,
+	[DBCreatedBy] [varchar](40) NULL,
+	[DBCreatedDate] [datetime2](7) NULL,
+	[DBLastUpdatedBy] [varchar](40) NULL,
+	[DBLastUpdatedDate] [datetime2](7) NULL,
+	[Version] [timestamp] NOT NULL,
+ CONSTRAINT [PK_LoanReportingNote] PRIMARY KEY CLUSTERED 
+(
+	[LoanReportingNoteId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+ALTER TABLE [fs].[LoanReportingNote]  WITH CHECK ADD  CONSTRAINT [FK_CreatedBy_LoanReportingNote] FOREIGN KEY([CreatedById])
+REFERENCES [usr].[AppUser] ([AppUserId])
+GO
+
+ALTER TABLE [fs].[LoanReportingNote] CHECK CONSTRAINT [FK_CreatedBy_LoanReportingNote]
+GO
+
+ALTER TABLE [fs].[LoanReportingNote]  WITH CHECK ADD  CONSTRAINT [FK_LastUpdatedBy_LoanReportingNote] FOREIGN KEY([LastUpdatedById])
+REFERENCES [usr].[AppUser] ([AppUserId])
+GO
+
+ALTER TABLE [fs].[LoanReportingNote] CHECK CONSTRAINT [FK_LastUpdatedBy_LoanReportingNote]
+GO
+
+ALTER TABLE [fs].[LoanReportingNote]  WITH CHECK ADD  CONSTRAINT [FK_Loan_LoanReportingNote] FOREIGN KEY([LoanId])
+REFERENCES [fs].[Loan] ([LoanId])
+GO
+
+ALTER TABLE [fs].[LoanReportingNote] CHECK CONSTRAINT [FK_Loan_LoanReportingNote]
+GO
+
+ALTER TABLE [fs].[LoanReportingNote]  WITH CHECK ADD  CONSTRAINT [FK_Order_LoanReportingNote] FOREIGN KEY([OrderId])
+REFERENCES [fs].[Order] ([OrderId])
+GO
+
+ALTER TABLE [fs].[LoanReportingNote] CHECK CONSTRAINT [FK_Order_LoanReportingNote]
+GO
+
+ALTER TABLE [fs].[LoanReportingNote]  WITH CHECK ADD  CONSTRAINT [FK_RefDataElement_LoanReportingNote_Type] FOREIGN KEY([LoanReportingNoteGroup], [LoanReportingNoteType])
+REFERENCES [ref].[ReferenceDataElement] ([GroupCode], [ElementCode])
+GO
+
+ALTER TABLE [fs].[LoanReportingNote] CHECK CONSTRAINT [FK_RefDataElement_LoanReportingNote_Type]
+GO
+
+ALTER TABLE [fs].[LoanReportingNote]  WITH CHECK ADD  CONSTRAINT [CK_LoanReportingNote_Json_IsValid] CHECK  ((isjson([NoteJson])=(1)))
+GO
+
+ALTER TABLE [fs].[LoanReportingNote] CHECK CONSTRAINT [CK_LoanReportingNote_Json_IsValid]
+GO
+
+
+
+
+
+
+using DomainModel.Common;
+using DomainModel.DynamicForm;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace DomainModel.Pres
+{
+    [Serializable]
+    [Table("fs.LoanReportingNote")]
+    [System.CodeDom.Compiler.GeneratedCode("EF", "6.1.0")]
+
+    public class LoanReportingNote : BaseDomainModel
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int LoanReportingNoteId { get; set; }
+        public int LoanId { get; set; }
+        public int? OrderId { get; set; }
+
+        [Required]
+        [StringLength(8)]
+        public string LoanReportingNoteGroup { get; set; }
+
+        [Required]
+        [StringLength(8)]
+        public string LoanReportingNoteType { get; set; }
+
+        [Required]
+        [Column("NoteJson", TypeName = "nvarchar(max)")]
+        public string NoteJson { get; set; }
+
+        public int? CreatedById { get; set; }
+
+        [Column(TypeName = "datetime2")]
+        public DateTime? CreatedDate { get; set; }
+
+        public int? LastUpdatedById { get; set; }
+
+        [Column(TypeName = "datetime2")]
+        public DateTime? LastUpdatedDate { get; set; }
+
+        [StringLength(40)]
+        public string DBCreatedBy { get; set; }
+
+        [Column(TypeName = "datetime2")]
+        public DateTime? DBCreatedDate { get; set; }
+
+        [StringLength(40)]
+        public string DBLastUpdatedBy { get; set; }
+
+        [Column(TypeName = "datetime2")]
+        public DateTime? DBLastUpdatedDate { get; set; }
+
+        [Timestamp]
+        public byte[] Version { get; set; }
+    }
+}
+
+
+
+
+public SaveLoanReportingNoteResponse SaveLoanReportingNotes(SaveLoanReportingNote request)
+{
+    using (var presData = new PresData())
+    using (var tx = presData.Database.BeginTransaction(System.Data.IsolationLevel.ReadCommitted))
+    {
+        try
+        {
+            if (request.OrderId.HasValue && request.OrderId.Value > 0)
+            {
+                var orderNote = new OrderNote
+                {
+                    OrderId = request.OrderId,
+                    NoteText = request.Note,
+                    OrderNoteType = request.OrderNoteType,
+                    OrderNoteTypeGroup = request.LoanNoteTypeGroup,
+                    EntryDate = request.CreatedDate,
+                    EnteredById = request.CreatedById,
+                    CreatedById = request.CreatedById,
+                    CreatedDate = request.CreatedDate
+                };
+                presData.OrderNotes.Add(orderNote);
+            }
+            else
+            {
+                var loanNote = new LoanNote
+                {
+                    LoanId = request.LoanId,
+                    NoteText = request.Note,
+                    LoanNoteType = request.LoanNoteType,
+                    LoanNoteTypeGroup = request.LoanNoteTypeGroup,
+                    EntryDate = request.CreatedDate,
+                    EnteredById = request.CreatedById,
+                    CreatedById = request.CreatedById,
+                    CreatedDate = request.CreatedDate
+                };
+                presData.LoanNotes.Add(loanNote);
+            }
+
+            var loanReportingNotes = new LoanReportingNote
+            {
+                OrderId = request.OrderId,
+                LoanId = request.LoanId,
+                LoanReportingNoteType = request.LoanNoteType,
+                LoanReportingNoteGroup = request.LoanNoteTypeGroup,
+                NoteJson = request.NoteJson,
+                CreatedById = request.CreatedById,
+                CreatedDate = request.CreatedDate
+            };
+            presData.LoanReportingNotes.Add(loanReportingNotes);
+
+            var rows = presData.SaveChanges();
+
+            tx.Commit();
+
+            return new SaveLoanReportingNoteResponse { IsSuccess = rows > 0 };
+        }
+        //catch (DbEntityValidationException ex)
+        //{
+        //    foreach (var eve in ex.EntityValidationErrors)
+        //    {
+        //        foreach (var ve in eve.ValidationErrors)
+        //        {
+        //            Console.WriteLine(ve.PropertyName + " " + ve.ErrorMessage);
+        //        }
+        //    }
+        //}
+        catch (Exception ex)
+        {
+            tx.Rollback();
+            return new SaveLoanReportingNoteResponse { IsSuccess = false };
+        }
+    }
+}
+
+
+
+Validation failed for one or more entities. See 'EntityValidationErrors' property for more details
