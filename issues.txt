@@ -236,3 +236,21 @@ LoanReportingNoteType: "HGHRSK"
 NoteJson: "{\"Trigger\":\"Uncovered Pool\",\"StatusDateChange\":\"03/16/2026\",\"OrderId\":\"1060005529\",\"ScopeOfWork\":\"Scope of Work\",\"MostRecentAction\":\"test notes\"}"
 OrderId: 1060005529
 Version: null
+
+
+System.Data.Entity.Validation.DbEntityValidationException
+  HResult=0x80131501
+  Message=Validation failed for one or more entities. See 'EntityValidationErrors' property for more details.
+  Source=CommonLib
+  StackTrace:
+   at DataAccess.Persistence.CustomDbContext.ContextSavingChanges(Object sender, EventArgs e)
+   at System.Data.Entity.Core.Objects.ObjectContext.OnSavingChanges()
+   at System.Data.Entity.Core.Objects.ObjectContext.PrepareToSaveChanges(SaveOptions options)
+   at System.Data.Entity.Core.Objects.ObjectContext.SaveChangesInternal(SaveOptions options, Boolean executeInExistingTransaction)
+   at System.Data.Entity.Internal.InternalContext.SaveChanges()
+   at DataAccess.Persistence.CustomDbContext.SaveChanges()
+   at DataAccess.Pres.PresDao.SaveLoanReportingNotes(SaveLoanReportingNote request) in C:\Users\ADM-74157\Pres\RC2_dev_AS1\src\Domain\DataAccess\Pres\PresDao.cs:line 11502
+
+  This exception was originally thrown at this call stack:
+    [External Code]
+    DataAccess.Pres.PresDao.SaveLoanReportingNotes(DomainModel.Pres.SaveLoanReportingNote) in PresDao.cs
