@@ -254,3 +254,21 @@ System.Data.Entity.Validation.DbEntityValidationException
   This exception was originally thrown at this call stack:
     [External Code]
     DataAccess.Pres.PresDao.SaveLoanReportingNotes(DomainModel.Pres.SaveLoanReportingNote) in PresDao.cs
+catch (DbEntityValidationException ex)
+{
+    foreach (var eve in ex.EntityValidationErrors)
+    {
+        Console.WriteLine("Entity: " + eve.Entry.Entity.GetType().Name);
+        Console.WriteLine("State: " + eve.Entry.State);
+
+        foreach (var ve in eve.ValidationErrors)
+        {
+            Console.WriteLine(string.Format(
+                "Property: {0}, Error: {1}",
+                ve.PropertyName,
+                ve.ErrorMessage));
+        }
+    }
+
+    throw;
+}
